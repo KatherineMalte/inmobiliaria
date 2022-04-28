@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<anyxmlelement xmlns:c="http://java.sun.com/jsp/jstl/core" />
-<%@page import="java.sql.*"%>
+<%@page import="com.inmobiliaria.app.dao.impl.personasDAOImpl"%>
+<%@page import="javax.swing.table.DefaultTableModel"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,19 +12,7 @@
 	href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
 </head>
 <body>
-	<%
-	Connection con;
-	String url = "jdbc:mysql://localhost:3306/desarrollo";
-	String Driver = "com.mysql.cj.jdbc.Driver";
-	String user = "root";
-	String clave = "password";
-	Class.forName(Driver);
-	con = DriverManager.getConnection(url, user, clave);
-	PreparedStatement ps;
-	ResultSet rs;
-	ps = con.prepareStatement("select p.nombre, p.apellido,v.fechavisita, p.correo,v.idpropiedad,p2.direccion from persona p inner join visitas v on v.idpersona = p.id inner join propiedad p2 on p2.id = v.idpropiedad");
-	rs = ps.executeQuery();
-	%>
+
 	<div align="center" class="container" p-5>
 
 		</head>
@@ -45,37 +33,35 @@
 		<div>
 			<table border="1" cellpadding="5"
 				class="table is-striped is-bordered is-fullwidth is-hoverable">
-				<tr>
-					<th>nombre</th>
-					<th>apellido</th>
-					<th>fechavisita</th>
-					<th>correo</th>
-					<th>idpropiedad</th>
-					<th>direccion</th>
-					<%
-					while (rs.next()) {
-					%>
-				</tr>
-				<tbody>
-				<c:forEach var="listPersonas" items="${listPersonas}">
+				<thead>
 					<tr>
-						<td><%=rs.getString("nombre")%></td>
-						<td><%=rs.getString("apellido")%></td>
-						<td><%=rs.getString("fechavisita")%></td>
-						<td><%=rs.getString("correo")%></td>
-						<td><%=rs.getInt("idpropiedad")%></td>
-						<td><%=rs.getString("direccion")%></td>
-						
-						<td>${listPersonas.fechavisita}</td>
-<%-- 						<td>${listPersonas.correo}</td> --%>
-<%-- 						<td>${listPersonas.idpropiedad}</td> --%>
-<%-- 						<td>${listPersonas.direccion}</td> --%>
+						<th>nombre</th>
+						<th>apellido</th>
+						<th>fechavisita</th>
+						<th>correo</th>
+						<th>idpropiedad</th>
+						<th>direccion</th>
 					</tr>
-
+				</thead>
+				<tbody>
 					<%
-					}
-					%>
-				</c:forEach>
+				personasDAOImpl api= new personasDAOImpl();
+				  DefaultTableModel tabla = new DefaultTableModel();
+			        tabla = api.leer();
+			        
+			        for (int t=0;t<tabla.getRowCount();t++){
+			            out.println("<tr data-id="+ tabla.getValueAt(t, 0) + ">");
+			            out.println("<td>"+ tabla.getValueAt(t, 1) +"</td>");
+			            out.println("<td>"+ tabla.getValueAt(t, 2) +"</td>");
+			            out.println("<td>"+ tabla.getValueAt(t, 3) +"</td>");
+			            out.println("<td>"+ tabla.getValueAt(t, 4) +"</td>");
+			            out.println("<td>"+ tabla.getValueAt(t, 5) +"</td>");
+			            out.println("<td>"+ tabla.getValueAt(t, 6) +"</td>");
+			            out.println("</tr>");
+			        
+			        }
+			        
+			        %>
 				</tbody>
 			</table>
 		</div>
